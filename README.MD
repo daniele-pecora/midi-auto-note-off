@@ -19,7 +19,24 @@ an additional MIDI *NOTE OFF* command
 
 
 
-### Install 
+### Download programm
+Simply download any of this executables and start it with a double click
+- [MAC OS Download]()
+- [Linux Download]()
+- [Windows Download]()
+
+
+#### Running on windows
+
+On Windows OS no virtual MIDI device can be created.  
+This may be done via 3rd-party software like 
+[LoopMIDI](http://www.tobias-erichsen.de/software/loopmidi.html) from http://www.tobias-erichsen.de/software/loopmidi.html
+
+
+
+---
+
+### Install via npm (alternative)
 
 1) **Requirements**  
 Make sure you have Node.js installed.  
@@ -58,9 +75,13 @@ Here is how you can find it out.
         midi-auto-note-off "TDX-15 MIDI"
         ```
 
+---
 
-### Running on windows
+### Build (from source)
 
-On Windows OS no virtual MIDI device can be created.  
-This may be done via 3rd-party software like 
-[LoopMIDI](http://www.tobias-erichsen.de/software/loopmidi.html) from http://www.tobias-erichsen.de/software/loopmidi.html
+Checkout the source and run
+```bash
+npm run executable
+```
+This will create the excutable files in directory `dist`.  
+Altough there is a windows executable it will not run and must be build on a windows system instead.
