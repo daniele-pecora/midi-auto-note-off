@@ -66,6 +66,7 @@ const startAutoNoteOff = (inputDeviceName, outputDeviceName, verbose) => {
         }
         const noteOffMsg = Object.assign(msg)
         noteOffMsg.velocity = 0
+        noteOffMsg._type = 'noteoff'
         deviceTarget.send('noteoff', noteOffMsg)
         if (verbose) {
             console.log('DEBUG: sent msg "noteoff"', noteOffMsg)
