@@ -6,7 +6,20 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "keywords": [
+    "NativeScript",
+    "JavaScript",
+    "Android",
+    "iOS"
+  ],
+  "author": {
+    "name": "Superfusion Mobile",
+    "email": "superfusion.mobile@googlemail.com"
+  },
+  "bugs": {
+    "url": "https://github.com/daniele-pecora/midi-auto-note-off/issues"
+  },
+  "homepage": "https://github.com/daniele-pecora/midi-auto-note-off",
   "license": "ISC",
   "dependencies": {
     "easymidi": "^2.0.1"
