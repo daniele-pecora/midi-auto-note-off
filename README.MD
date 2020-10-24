@@ -70,7 +70,8 @@ _Windows OS will require existing MIDI output devices. See note 'Running on wind
 
 Checkout the source and run
 ```bash
-npm run executable
+$ npm install
+$ npm run executable
 ```
 This will create the excutable files in directory `dist`.  
 Altough there is a windows executable it will not run and must be build on a windows system instead.
