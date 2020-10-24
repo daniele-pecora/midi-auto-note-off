@@ -19,14 +19,14 @@ an additional MIDI *NOTE OFF* command
 
 
 
-### Download programm
+## Download programm
 Simply download any of this executables and start it with a double click
 - [MAC OS Download]()
 - [Linux Download]()
 - [Windows Download]()
 
 
-#### Running on windows
+### Running on windows
 
 On Windows OS no virtual MIDI device can be created.  
 This may be done via 3rd-party software like  
@@ -36,7 +36,7 @@ This may be done via 3rd-party software like
 
 ---
 
-### Install via npm (alternative)
+## Install via npm (alternative)
 
 1) **Requirements**  
 Make sure you have Node.js installed.  
@@ -59,10 +59,11 @@ https://nodejs.org/en/download/
     If your OS doesn't support creating virtual output devices
     then you will also be asked to select a MIDI output device.
 
-_Windows OS will require existing MIDI output devices. See note 'Running on windows' on top of page._
+_Windows OS will require existing MIDI output devices. See note 'Running on windows' on top of page._  
+
 ---
 
-### Build (from source)
+## Build (from source)
 
 Checkout the source and run
 ```bash
@@ -71,4 +72,4 @@ npm run executable
 This will create the excutable files in directory `dist`.  
 Altough there is a windows executable it will not run and must be build on a windows system instead.
 
-_Windows OS will require existing MIDI output devices. See note 'Running on windows' on top of page._
+_Windows OS will require existing MIDI output devices. See note 'Running on windows' on top of page._  
