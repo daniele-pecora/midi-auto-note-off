@@ -13,10 +13,11 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "NativeScript",
     "JavaScript",
-    "Android",
-    "iOS"
+    "MIDI",
+    "Logic Pro X",
+    "DAW",
+    "E-DRUM"
   ],
   "author": {
     "name": "Superfusion Mobile",

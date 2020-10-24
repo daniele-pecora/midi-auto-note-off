@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+
 /** 
  @author Superfusion Mobile - superfusion.mobile@googlemail.com
 
