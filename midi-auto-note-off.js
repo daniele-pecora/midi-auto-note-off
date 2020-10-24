@@ -263,7 +263,16 @@ const main = async () => {
 
     const requireOutputDevice = isWin || !(await canCreateVirtualDevice())
     if (!options.outputDeviceName && requireOutputDevice) {
+        const printOutputDeviceMSG = () => {
+            console.log()
+            console.log('This operating system is not able to create virtual MIDI devices.')
+            console.log('You must select an existing MIDI device or')
+            console.log('create a virtual device with 3rd-party software like')
+            console.log('LoopMIDI from http://www.tobias-erichsen.de/software/loopmidi.html')
+            console.log()
+        }
         // ask for device from list
+        printOutputDeviceMSG()
         const deviceName = await askForDevice('Select the output MIDI device', easymidi.getOutputs())
         if (deviceName)
             options.outputDeviceName = deviceName
@@ -272,12 +281,7 @@ const main = async () => {
             // printUsage()
             console.log()
             console.log(' ⚠ ⚠ ⚠ ! Output MIDI device required ! ⚠ ⚠ ⚠')
-            console.log()
-            console.log('This operating system is not able to create virtual MIDI devices.')
-            console.log('You must select an existing MIDI device or')
-            console.log('create a virtual device with 3rd-party software like')
-            console.log('LoopMIDI from http://www.tobias-erichsen.de/software/loopmidi.html')
-            console.log()
+            printOutputDeviceMSG()
             process.exit(1)
         }
     }
