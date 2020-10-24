@@ -31,6 +31,7 @@ Usage :
 const autoUseFirstDeviceFound = false
 
 const easymidi = require('easymidi')
+const { resolve } = require('path')
 
 const outputDeviceNameDefault = 'Virtual MIDI output device - Auto NOTE OFF'
 /**
@@ -149,7 +150,7 @@ if (autoUseFirstDeviceFound && !options.inputDeviceName && easymidi.getInputs().
 
 const main = async () => {
     // can create virtual device?
-    const canCreateVirtualDevice = () => {
+    const canCreateVirtualDevice = async () => {
         let testVirtualDevice
         try {
             testVirtualDevice = new easymidi.Output('Test virtual device', true)
@@ -157,9 +158,44 @@ const main = async () => {
             console.error(e)
             testVirtualDevice = null
         }
-        const retVal = testVirtualDevice ? true : false
-        if (testVirtualDevice) {
-            try { testVirtualDevice.close() } catch (e) { console.error(e) }
+
+        const prom = new Promise((resolve, reject) => {
+            if (!testVirtualDevice) {
+                reject(new Error('Virtual device could not be created'))
+            } else {
+                try {
+                    testVirtualDevice.send('noteoff', {
+                        note: 1,
+                        velocity: 1,
+                        channel: 1
+                    })
+                    if (!testVirtualDevice.on) {
+                        resolve(true)
+                    }
+                } catch (e) {
+                    console.error(e)
+                    reject(e)
+                }
+                if (testVirtualDevice.on)
+                    try {
+                        testVirtualDevice.on('noteoff', (msg) => {
+                            resolve(true)
+                        })
+                    } catch (e) {
+                        console.error(e)
+                        reject(e)
+                    }
+                try { testVirtualDevice.close() } catch (e) {
+                    console.error(e)
+                    reject(e)
+                }
+            }
+        })
+        let retVal = false
+        try {
+            retVal = await prom
+        } catch (e) {
+            console.error(e)
         }
         return retVal
     }
@@ -221,7 +257,7 @@ const main = async () => {
         process.exit(1)
     }
 
-    const requireOutputDevice = !canCreateVirtualDevice()
+    const requireOutputDevice = !(await canCreateVirtualDevice())
     if (!options.outputDeviceName && requireOutputDevice) {
         // ask for device from list
         const deviceName = await askForDevice('Select the output MIDI device', easymidi.getOutputs())
