@@ -26,6 +26,10 @@ Usage :
         node ${scriptFile} "<Target-Device-Name>"
 
  */
+
+// when device argument is missing it will use the first midi device that has been found
+const autoUseFirstDeviceFound = false
+
 const easymidi = require('easymidi')
 
 const outputDeviceNameDefault = 'Virtual MIDI output device - Auto NOTE OFF'
@@ -118,11 +122,10 @@ process.argv.slice(2).filter(item => {
     }
 })
 
-if (options.help || !options.deviceName) {
+if (options.help) {
     printUsage()
     process.exit(1)
 }
-
 if (!easymidi.getInputs().length) {
     printUsage()
     console.log('⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ')
@@ -130,20 +133,77 @@ if (!easymidi.getInputs().length) {
     console.log('⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ')
     process.exit(1)
 }
-
-
-const argDeviceSelected = options.deviceName
-const deviceFoundByArg = easymidi.getInputs().filter(item => item === argDeviceSelected)[0]
-if (!deviceFoundByArg) {
-    console.log()
-    console.log('⚠ 🎹 ! No MIDI INPUT DEVICE FOUND with name: "' + argDeviceSelected + '" !  🎹 ⚠')
-    console.log('Run the following command to show a list of devices:')
-    console.log(`\tnode ${scriptFile}`)
-    console.log()
-    process.exit(1)
+if (autoUseFirstDeviceFound && !options.deviceName && easymidi.getInputs().length === 1) {
+    options.deviceName = easymidi.getInputs()[0]
 }
 
-console.log(`    ⭑ ⭑ ⭑ Auto MIDI NOTE OFF started ⭑ ⭑ ⭑ 
+const main = async () => {
+    const askForDevice = async () => {
+        const inputs = easymidi.getInputs()
+        const devList = []
+        inputs.filter((item, index, all) => {
+            devList.push(`${index + 1}) ${item}`)
+        })
+
+        const rlp = require('readline')
+        const rl = rlp.createInterface({
+            input: process.stdin,
+            output: process.stdout
+        })
+        const prom = new Promise((resolve, reject) => {
+            devList.push('')
+            devList.push('Type key \'Enter\' to exit')
+            rl.question(
+                ('Select the input MIDI device\n') +
+                ('\t' + devList.join('\n\t')) +
+                ('\n') +
+                'Enter number: ',
+                (input) => {
+                    rl.close()
+                    resolve(input)
+                }
+            )
+        })
+        let selectedIndex = -2
+        try {
+            selectedIndex = await prom
+            if (selectedIndex === '' || selectedIndex === '0' || selectedIndex === 'Enter') {
+                // provoke exit
+                selectedIndex = -2
+            }
+        } catch (e) {
+            // nothing selected
+        }
+        if (!selectedIndex) {
+            selectedIndex = 1
+        }
+        return inputs[Number.parseInt(selectedIndex) - 1]
+    }
+
+    if (!options.deviceName) {
+        // ask for device from list
+        const deviceName = await askForDevice()
+        if (deviceName)
+            options.deviceName = deviceName
+    }
+
+    if (!options.deviceName) {
+        printUsage()
+        process.exit(1)
+    }
+
+    const argDeviceSelected = options.deviceName
+    const deviceFoundByArg = easymidi.getInputs().filter(item => item === argDeviceSelected)[0]
+    if (!deviceFoundByArg) {
+        console.log()
+        console.log('⚠ 🎹 ! No MIDI INPUT DEVICE FOUND with name: "' + argDeviceSelected + '" !  🎹 ⚠')
+        console.log('Run the following command to show a list of devices:')
+        console.log(`\tnode ${scriptFile}`)
+        console.log()
+        process.exit(1)
+    }
+
+    console.log(`    ⭑ ⭑ ⭑ Auto MIDI NOTE OFF started ⭑ ⭑ ⭑ 
 
 Listening on device:
     "${argDeviceSelected}"
@@ -155,4 +215,7 @@ Setup your DAW to use the MIDI output device:
 `)
 
 
-startAutoNoteOff(deviceFoundByArg, null, options.verbose)
+    startAutoNoteOff(deviceFoundByArg, null, options.verbose)
+}
+
+main()
