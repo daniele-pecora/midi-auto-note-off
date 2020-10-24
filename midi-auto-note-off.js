@@ -62,7 +62,8 @@ const startAutoNoteOff = (inputDeviceName, outputDeviceName, verbose) => {
 
 
 /** main */
-const scriptFile = require('path').basename(process.argv[1])
+const path = require('path')
+const scriptFile = path.parse(path.basename(process.argv[1])).name
 
 const printUsage = () => {
     const usage = `

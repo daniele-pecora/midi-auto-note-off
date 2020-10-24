@@ -16,3 +16,19 @@ received from the target input device
 an additional MIDI *NOTE OFF* command
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;🥁 🥁 🥁   
+
+
+
+Install 
+
+1) Node.js
+Dowload and install Node.js from here  
+https://nodejs.org/en/download/
+
+2) Install programm
+
+Install programm from a terminal, *Powershell* oder *Command* 
+
+```
+    $ npm install -g midi-auto-note-off
+```
