@@ -23,7 +23,7 @@ Install
 
 1) **Requirements**  
 Make sure you have Node.js installed.  
-Otherwise dowload and install Node.js from here  
+Otherwise download and install Node.js from here  
 https://nodejs.org/en/download/
 
 2) **Install**    
