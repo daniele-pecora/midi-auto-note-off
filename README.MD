@@ -19,7 +19,7 @@ an additional MIDI *NOTE OFF* command
 
 
 
-Install 
+### Install 
 
 1) **Requirements**  
 Make sure you have Node.js installed.  
@@ -57,3 +57,10 @@ Here is how you can find it out.
         ```bash
         midi-auto-note-off "TDX-15 MIDI"
         ```
+
+
+### Running on windows
+
+On Windows OS no virtual MIDI device can be created.  
+This may be done via 3rd-party software like 
+[LoopMIDI](http://www.tobias-erichsen.de/software/loopmidi.html) from http://www.tobias-erichsen.de/software/loopmidi.html

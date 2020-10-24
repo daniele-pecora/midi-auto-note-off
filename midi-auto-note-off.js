@@ -23,7 +23,7 @@ an additional MIDI *NOTE OFF* command
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 Usage : 
-        node ${scriptFile} "<Target-Device-Name>"
+        node ${scriptFile} "<Input-Device-Name>" "<Output-Device-Name> (optional)"
 
  */
 
@@ -33,33 +33,38 @@ const autoUseFirstDeviceFound = false
 const easymidi = require('easymidi')
 
 const outputDeviceNameDefault = 'Virtual MIDI output device - Auto NOTE OFF'
-
+/**
+ * 
+ * @param {*} inputDeviceName The name of the MIDI input device. Must not be `null`.
+ * @param {*} outputDeviceName The name of the output MIDI device. If `null` or empty then a virtual device will be created.
+ * @param {*} verbose Set to `true` to log all received and sent MIDI messages to console
+ */
 const startAutoNoteOff = (inputDeviceName, outputDeviceName, verbose) => {
     const inputDevice = new easymidi.Input(inputDeviceName, false)
-    const outputVirtual = new easymidi.Output(outputDeviceName || outputDeviceNameDefault, true)
+    const outputVirtual = new easymidi.Output(outputDeviceName || outputDeviceNameDefault, (outputDeviceName ? false : true))
 
     /** auto send note-off on note-on - begin */
     const deviceSource = inputDevice
     const deviceTarget = outputVirtual
     if (verbose) {
-        console.log('listen on device', deviceSource.name)
+        console.log('DEBUG: listen on device', deviceSource.name)
     }
     if (verbose) {
-        console.log('destination device', deviceTarget.name)
+        console.log('DEBUG: destination device', deviceTarget.name)
     }
     deviceSource.on('noteon', function (msg) {
         if (verbose) {
-            console.log('received msg "noteon"', msg)
+            console.log('DEBUG: received msg "noteon"', msg)
         }
         deviceTarget.send('noteon', msg)
         if (verbose) {
-            console.log('sent msg "noteon"', msg)
+            console.log('DEBUG: sent msg "noteon"', msg)
         }
         const noteOffMsg = Object.assign(msg)
         noteOffMsg.velocity = 0
         deviceTarget.send('noteoff', noteOffMsg)
         if (verbose) {
-            console.log('sent msg "noteoff"', noteOffMsg)
+            console.log('DEBUG: sent msg "noteoff"', noteOffMsg)
         }
     })
     /** auto send note-off on note-on - end */
@@ -93,7 +98,7 @@ an additional MIDI *NOTE OFF* command
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 Usage : 
-        ${startProgrammName}${scriptFile} "<Target-Device-Name>"
+        ${startProgrammName}${scriptFile} "<Input-Device-Name>" "<Output-Device-Name> (optional)"
 
 .   .   .   .   .   .   .   .   .   .   .   .  . 
 
@@ -118,7 +123,11 @@ process.argv.slice(2).filter(item => {
     } else if (item === '-v' || item === '--verbose') {
         options.verbose = true
     } else {
-        options.deviceName = item
+        if (!options.inputDeviceName) {
+            options.inputDeviceName = item
+        } else {
+            options.outputDeviceName = item
+        }
     }
 })
 
@@ -133,15 +142,32 @@ if (!easymidi.getInputs().length) {
     console.log('⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ⚠ ')
     process.exit(1)
 }
-if (autoUseFirstDeviceFound && !options.deviceName && easymidi.getInputs().length === 1) {
-    options.deviceName = easymidi.getInputs()[0]
+if (autoUseFirstDeviceFound && !options.inputDeviceName && easymidi.getInputs().length === 1) {
+    options.inputDeviceName = easymidi.getInputs()[0]
 }
 
+
 const main = async () => {
-    const askForDevice = async () => {
-        const inputs = easymidi.getInputs()
+    // can create virtual device?
+    const canCreateVirtualDevice = () => {
+        let testVirtualDevice
+        try {
+            testVirtualDevice = new easymidi.Output('Test virtual device', true)
+        } catch (e) {
+            console.error(e)
+            testVirtualDevice = null
+        }
+        const retVal = testVirtualDevice ? true : false
+        if (testVirtualDevice) {
+            try { testVirtualDevice.close() } catch (e) { console.error(e) }
+        }
+        return retVal
+    }
+
+    // promt for device selection
+    const askForDevice = async (title, devices) => {
         const devList = []
-        inputs.filter((item, index, all) => {
+        devices.filter((item, index, all) => {
             devList.push(`${index + 1}) ${item}`)
         })
 
@@ -154,7 +180,7 @@ const main = async () => {
             devList.push('')
             devList.push('Type key \'Enter\' to exit')
             rl.question(
-                ('Select the input MIDI device\n') +
+                (title) + '\n' +
                 ('\t' + devList.join('\n\t')) +
                 ('\n') +
                 'Enter number: ',
@@ -177,45 +203,77 @@ const main = async () => {
         if (!selectedIndex) {
             selectedIndex = 1
         }
-        return inputs[Number.parseInt(selectedIndex) - 1]
+        return devices[Number.parseInt(selectedIndex) - 1]
     }
 
-    if (!options.deviceName) {
+    if (!options.inputDeviceName) {
         // ask for device from list
-        const deviceName = await askForDevice()
+        const deviceName = await askForDevice('Select the input MIDI device', easymidi.getInputs())
         if (deviceName)
-            options.deviceName = deviceName
+            options.inputDeviceName = deviceName
     }
 
-    if (!options.deviceName) {
+    if (!options.inputDeviceName) {
         printUsage()
-        process.exit(1)
-    }
-
-    const argDeviceSelected = options.deviceName
-    const deviceFoundByArg = easymidi.getInputs().filter(item => item === argDeviceSelected)[0]
-    if (!deviceFoundByArg) {
         console.log()
-        console.log('⚠ 🎹 ! No MIDI INPUT DEVICE FOUND with name: "' + argDeviceSelected + '" !  🎹 ⚠')
-        console.log('Run the following command to show a list of devices:')
-        console.log(`\tnode ${scriptFile}`)
+        console.log(' ⚠ ⚠ ⚠ ! Input MIDI device required ! ⚠ ⚠ ⚠')
         console.log()
         process.exit(1)
     }
 
-    console.log(`    ⭑ ⭑ ⭑ Auto MIDI NOTE OFF started ⭑ ⭑ ⭑ 
+    const requireOutputDevice = !canCreateVirtualDevice()
+    if (!options.outputDeviceName && requireOutputDevice) {
+        // ask for device from list
+        const deviceName = await askForDevice('Select the output MIDI device', easymidi.getOutputs())
+        if (deviceName)
+            options.outputDeviceName = deviceName
+
+        if (!options.outputDeviceName) {
+            // printUsage()
+            console.log()
+            console.log(' ⚠ ⚠ ⚠ ! Output MIDI device required ! ⚠ ⚠ ⚠')
+            console.log()
+            console.log('This operating system is not able to create virtual MIDI devices.')
+            console.log('You must select an existing MIDI device or')
+            console.log('create a virtual device with 3rd-party software like')
+            console.log('LoopMIDI from http://www.tobias-erichsen.de/software/loopmidi.html')
+            console.log()
+            process.exit(1)
+        }
+    }
+
+    const testDeviceName = (deviceName, devices, errorMsg) => {
+        const deviceFoundByName = devices.filter(item => item === deviceName)[0]
+        if (!deviceFoundByName) {
+            console.log()
+            // console.log('⚠ 🎹 ! No MIDI INPUT DEVICE FOUND with name: "' + deviceName + '" !  🎹 ⚠')
+            console.log(errorMsg)
+            console.log('Run the following command to show a list of devices:')
+            console.log(`\tnode ${scriptFile}`)
+            console.log()
+            process.exit(1)
+        }
+        return deviceFoundByName
+    }
+
+    const inputDevice = testDeviceName(options.inputDeviceName, easymidi.getInputs(), '⚠ 🎹 ! No MIDI INPUT DEVICE FOUND with name: "' + options.inputDeviceName + '" !  🎹 ⚠')
+    const outputDevice = requireOutputDevice ? testDeviceName(options.outputDeviceName, easymidi.getOutputs(), '⚠ 🎹 ! No MIDI OUTPUT DEVICE FOUND with name: "' + options.outputDeviceName + '" !  🎹 ⚠') : null
+
+
+    console.log(`- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+        ⭑ ⭑ ⭑ Auto MIDI NOTE OFF started ⭑ ⭑ ⭑ 
 
 Listening on device:
-    "${argDeviceSelected}"
+    "${inputDevice}"
 
 Setup your DAW to use the MIDI output device:
-    "${outputDeviceNameDefault}"
+    "${requireOutputDevice ? outputDevice : outputDeviceNameDefault}"
 
                     🥁 🥁 🥁
 `)
 
 
-    startAutoNoteOff(deviceFoundByArg, null, options.verbose)
+    startAutoNoteOff(inputDevice, outputDevice, options.verbose)
 }
 
 main()
