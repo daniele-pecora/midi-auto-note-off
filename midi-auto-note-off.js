@@ -61,10 +61,11 @@ const startAutoNoteOff = (inputDeviceName, outputDeviceName, verbose) => {
     /** auto send note-off on note-on - end */
 }
 
-
 /** main */
 const path = require('path')
 const scriptFile = path.parse(path.basename(process.argv[1])).name
+// when started from a npm link script then no file extension is present ;-)
+const startProgrammName = process.argv[1].endsWith('.js') ? 'node ' : ''
 
 const printUsage = () => {
     const usage = `
@@ -88,7 +89,7 @@ an additional MIDI *NOTE OFF* command
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 Usage : 
-        node ${scriptFile} "<Target-Device-Name>"
+        ${startProgrammName}${scriptFile} "<Target-Device-Name>"
 
 .   .   .   .   .   .   .   .   .   .   .   .  . 
 
@@ -100,7 +101,7 @@ Below is a list of recognized devices:
 \t${easymidi.getOutputs().length ? easymidi.getOutputs().join('\n\t') : '<no device connected>'}
 
 Example : 
-       node ${scriptFile} "${easymidi.getInputs()[0] || 'TDX-15 MIDI'}"
+       ${startProgrammName}${scriptFile} "${easymidi.getInputs()[0] || 'TDX-15 MIDI'}"
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 `
     console.log(usage)
