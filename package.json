@@ -10,7 +10,8 @@
     "mano": "midi-auto-note-off.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "executable": "pkg ./ --out-path dist/"
   },
   "keywords": [
     "JavaScript",
@@ -30,5 +31,8 @@
   "license": "ISC",
   "dependencies": {
     "easymidi": "^2.0.1"
+  },
+  "devDependencies": {
+    "pkg": "^4.4.9"
   }
 }
