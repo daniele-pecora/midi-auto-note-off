@@ -29,7 +29,7 @@ Simply download any of this executables and start it with a double click
 #### Running on windows
 
 On Windows OS no virtual MIDI device can be created.  
-This may be done via 3rd-party software like 
+This may be done via 3rd-party software like  
 [LoopMIDI](http://www.tobias-erichsen.de/software/loopmidi.html) from http://www.tobias-erichsen.de/software/loopmidi.html
 
 
@@ -50,31 +50,16 @@ https://nodejs.org/en/download/
     ```
 
 3) **Run programm**    
-To run this programm you must know the e-drum set MIDI device name.  
-Here is how you can find it out.
-    - **Find device name**  
-        Find out the MIDI device name by running the programm without any arguments  
+    Type in your terminal, *Powershell* oder *Command Prompt*
+    ```bash
+    midi-auto-note-off
+    ```
 
-        Type in your terminal, *Powershell* oder *Command Prompt*
-        ```bash
-        midi-auto-note-off
-        ```
-        This will output something like 
-        ```bash
-        Below is a list of recognized devices:
-            Input devices (Target)
-                VMPK Output
-                "TDX-15 MIDI"
-        ```
-        In this example there are the 2 devices *VMPK Output* (a virtual piano keyboard) *TDX-15 MIDI* (my e-drum set).  
-        _(the quotes are actually not part of the name)_
+    You will be asked to select a MIDI input device.
+    If your OS doesn't support creating virtual output devices
+    then you will also be asked to select a MIDI output device.
 
-    - **Run**   
-        Now grab the name of the e-drum set device and set it as argument after programm command:
-        ```bash
-        midi-auto-note-off "TDX-15 MIDI"
-        ```
-
+_Windows OS will require existing MIDI output devices. See note 'Running on windows' on top of page._
 ---
 
 ### Build (from source)
@@ -85,3 +70,5 @@ npm run executable
 ```
 This will create the excutable files in directory `dist`.  
 Altough there is a windows executable it will not run and must be build on a windows system instead.
+
+_Windows OS will require existing MIDI output devices. See note 'Running on windows' on top of page._
