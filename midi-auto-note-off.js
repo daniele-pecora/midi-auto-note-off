@@ -27,6 +27,9 @@ Usage :
 
  */
 
+const os = require('os')
+const isWin = os.platform().toLowerCase() === 'win32' || os.platform().toLowerCase() === 'win64'
+
 // when device argument is missing it will use the first midi device that has been found
 const autoUseFirstDeviceFound = false
 
@@ -257,7 +260,7 @@ const main = async () => {
         process.exit(1)
     }
 
-    const requireOutputDevice = !(await canCreateVirtualDevice())
+    const requireOutputDevice = isWin || !(await canCreateVirtualDevice())
     if (!options.outputDeviceName && requireOutputDevice) {
         // ask for device from list
         const deviceName = await askForDevice('Select the output MIDI device', easymidi.getOutputs())
