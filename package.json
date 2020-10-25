@@ -12,7 +12,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "executable": "pkg ./ --out-path dist/",
-    "preexecutable": "node -e \"fs.copyFileSync('node_modules/midi/build/Release/midi.node', 'dist/midi.node')\""
+    "preexecutable": "node -e \"if (!fs.existsSync('dist')){fs.mkdirSync('dist');};fs.copyFileSync('node_modules/midi/build/Release/midi.node', 'dist/midi.node')\""
   },
   "keywords": [
     "JavaScript",
