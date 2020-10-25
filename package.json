@@ -1,6 +1,6 @@
 {
   "name": "midi-auto-note-off",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Solves the problem with certain e-drums not sending MIDI NOTE OFF command by playing a proxy and adding the missing MIDI NOTE off command.",
   "main": "midi-auto-note-off.js",
   "bin": {
