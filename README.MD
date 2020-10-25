@@ -59,7 +59,7 @@ https://nodejs.org/en/download/
     If your OS doesn't support creating virtual output devices
     then you will also be asked to select a MIDI output device.
 
-_Windows OS will require existing MIDI output devices. See note 'Running on windows' on top of page._  
+_Keep in mind: Windows OS will require existing MIDI output devices. See note 'Running on windows' on top of page._  
 
 
 
@@ -73,7 +73,11 @@ Checkout the source and run
 $ npm install
 $ npm run executable
 ```
-This will create the excutable files in directory `dist`.  
-Altough there is a windows executable it will not run and must be build on a windows system instead.
+This will create the excutable file for the specific os in directory `dist`.  
+Every os specific executable must be built on the specific os.  
+So the executables provided with the links above are built by the specific operating systems:   
+- MAC OS Catalina 
+- Ubuntu 20.04
+- Windows 10
 
-_Windows OS will require existing MIDI output devices. See note 'Running on windows' on top of page._  
+_Keep in mind: Windows OS will require existing MIDI output devices. See note 'Running on windows' on top of page._  
