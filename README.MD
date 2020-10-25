@@ -21,9 +21,9 @@ an additional MIDI *NOTE OFF* command
 
 ## Download programm
 Simply download any of this executables and start it with a double click
-- [MAC OS Download](https://github.com/daniele-pecora/midi-auto-note-off/releases/download/1.0.0/midi-auto-note-off-macos.zip)
-- [Linux Download](https://github.com/daniele-pecora/midi-auto-note-off/releases/download/1.0.0/midi-auto-note-off-linux.zip)
-- [Windows Download](https://github.com/daniele-pecora/midi-auto-note-off/releases/download/1.0.0/midi-auto-note-off-win.zip)
+- [MAC OS Download](https://github.com/daniele-pecora/midi-auto-note-off/releases/download/1.0.1/midi-auto-note-off-macos.zip)
+- [Linux Download](https://github.com/daniele-pecora/midi-auto-note-off/releases/download/1.0.1/midi-auto-note-off-linux.zip)
+- [Windows Download](https://github.com/daniele-pecora/midi-auto-note-off/releases/download/1.0.1/midi-auto-note-off-win.zip)
 
 
 ### Running on windows
